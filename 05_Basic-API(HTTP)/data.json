@@ -1,0 +1,22 @@
+[
+  {
+    "id": "1",
+    "name": "Mohit",
+    "rank": "S rank"
+  },
+  {
+    "id": "2",
+    "name": "neha",
+    "rank": "A rank"
+  },
+  {
+    "id": "3",
+    "name": "Sneha",
+    "rank": "A rank"
+  },
+  {
+    "id": "4",
+    "name": "Rohan",
+    "rank": "E rank"
+  }
+]

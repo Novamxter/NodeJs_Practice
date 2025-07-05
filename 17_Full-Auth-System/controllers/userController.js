@@ -60,14 +60,13 @@ exports.loginPage = async (req, res) => {
 exports.profilePage = async (req, res) => {
   const username = req.user.username
   const user = await User.findOne({ username })
-  console.log(req.user)
   res.json({user})
 };
 
 function generateToken(user) {
   return jwt.sign(
     { id: user._id, username: user.username },
-    process.env.TOKEN_KEY || "testsecret", // fallback in dev
+    process.env.TOKEN_KEY || "testsecret", 
     { expiresIn: "1h" }
   );
 }

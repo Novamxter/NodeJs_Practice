@@ -1,9 +1,15 @@
-const express = require('express')
-const controller = require('../controllers/userController')
-const router = express.Router()
+const express = require("express");
+const controller = require("../controllers/userController");
+const {authenticateToken} = require("../middlewares/authMiddleware")
+const router = express.Router();
 
-router.post('/register',controller.register)
-router.post('/login',controller.login)
-router.get('/safeRoute',controller.safeRoute)
+router.post("/register", controller.register);
+router.get("/register", controller.registerPage);
 
-module.exports = router
+router.post("/login", controller.login);
+router.get("/login", controller.loginPage);
+
+router.get("/profile", authenticateToken, controller.profilePage);
+router.get('/favicon.ico', (req, res) => res.status(204)); // No Content
+
+module.exports = router;

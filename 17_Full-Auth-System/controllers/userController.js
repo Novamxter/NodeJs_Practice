@@ -1,4 +1,5 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
+const path = require("path");
 const User = require("../models/userSchema");
 
 exports.register = async (req, res) => {
@@ -22,20 +23,46 @@ exports.register = async (req, res) => {
     const token = generateToken(newUser);
 
     // Send response
-    return res.status(200).json({ token });
-  } catch (e) {
-    console.error("Server Error:", e);
+    return res
+      .status(200)
+      .json({ message: "You Have Succefully Registered", token });
+  } catch (err) {
+    console.error("Server Error:", err);
     return res.status(500).send("Server Error");
   }
 };
 
-exports.login = async (req,res)=>{
-  
-}
+exports.login = async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const user = await User.findOne({ username });
+    if (!user || user.password !== password)
+      return res
+        .status(400)
+        .json({ message: "User not Found or Invalid Password" });
+    const token = generateToken(user);
+    return res.status(200).json({ message: "Login Successfully", token });
+  } catch (err) {
+    console.log("Message:", err);
+    return res.status(500).send("Server Error");
+  }
+};
 
-exports.safeRoute = async (req,res)=>{
-  
-}
+exports.registerPage = async (req, res) => {
+  //res.sendFile('register.html')
+  res.sendFile(path.join(__dirname, "..", "public", "register.html"));
+};
+
+exports.loginPage = async (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "login.html"));
+};
+
+exports.profilePage = async (req, res) => {
+  const username = req.user.username
+  const user = await User.findOne({ username })
+  console.log(req.user)
+  res.json({user})
+};
 
 function generateToken(user) {
   return jwt.sign(

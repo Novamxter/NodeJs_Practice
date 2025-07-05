@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- <form method="POST">
+      <p>
+        <label for="username">Enter Username:</label>
+        <input type="text" id="username" name="username" required />
+      </p>
+      <p>
+        <label for="password">Enter Pasword:</label>
+        <input type="text" id="password" name="password" required />
+      </p>
+      <button type="submit">Login</button>
+    </form>
+    <p>
+      Click here to register
+      <a href="http://localhost:3000/user/register">Register</a>
+    </p> -->
+    <script type="module">
+      import { renderProfile, renderLogin } from "/profile.js";
+
+      const token = localStorage.getItem("token");
+      const path = window.location.pathname;
+      //Initial render
+      if (path === "/user/profile") {
+        if (token) {
+          makeGetReq(token);
+        } else {
+          renderLogin();
+        }
+      } else {
+        renderLogin();
+      }
+
+      //Form handling
+      document.querySelector("form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        const res = await fetch("http://localhost:3000/user/login", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+
+        let data = await res.json();
+
+        console.log(data);
+        if (res.ok) {
+          localStorage.setItem("token", data.token);
+          const profileRes = await fetch("http://localhost:3000/user/profile", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${data.token}`,
+            },
+          });
+
+          const profileData = await profileRes.json();
+          const user = profileData.user;
+          if (profileRes.ok) {
+            renderProfile(user);
+          } else {
+            alert("Invalid or expired token");
+          }
+        } else {
+          alert(data.message);
+        }
+      });
+
+      //Popstate handler
+      window.addEventListener("popstate", async (e) => {
+        if (e.state?.page === "profile" && token) {
+          makeGetReq(token);
+        } else {
+          localStorage.removeItem("token");
+          
+          renderLogin();
+          window.location.reload();
+        }
+      });
+
+      async function makeGetReq(token) {
+        const res = await fetch("http://localhost:3000/user/profile", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          renderProfile(data.user);
+        } else {
+          localStorage.removeItem("token");
+          renderLogin();
+        }
+      }
+    </script>
+  </body>
+</html>

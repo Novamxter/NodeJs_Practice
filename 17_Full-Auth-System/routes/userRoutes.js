@@ -10,6 +10,5 @@ router.post("/login", controller.login);
 router.get("/login", controller.loginPage);
 
 router.get("/profile", authenticateToken, controller.profilePage);
-router.get('/favicon.ico', (req, res) => res.status(204)); // No Content
 
 module.exports = router;

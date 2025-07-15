@@ -1,6 +1,5 @@
 require('dotenv').config()
 const express = require('express')
-//const controller = require('./controllers/userController')
 const routes = require('./routes/userRoutes')
 const mongoose = require('mongoose')
 const cors = require('cors')
@@ -10,19 +9,16 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 //app.use(cors())
 app.use(cors({
-  origin: "http://localhost:5500", // or '*', but not safe for production
+  origin: "http://localhost:5500",
   credentials: true,
   exposedHeaders: ["Authorization"]
 }));
 
-app.use((req, res, next) => {
-  console.log(`[${req.method}] ${req.url}`);
-  next();
-});
-
-app.use(express.static('public'))
-
-//app.set('view engine',"ejs")
+//to check for methods and urls
+// app.use((req, res, next) => {
+//   console.log(`[${req.method}] ${req.url}`);
+//   next();
+// });
 
 mongoose.connect(process.env.DATA_STRING).then(()=>{
   console.log("Connected to database..")
@@ -30,6 +26,7 @@ mongoose.connect(process.env.DATA_STRING).then(()=>{
   console.error("Unable to connect:",e)
 })
 
+app.use(express.static('public'))
 app.use('/user',routes)
 
 app.listen(3000,()=>{

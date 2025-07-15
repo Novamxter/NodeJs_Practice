@@ -25,7 +25,7 @@ exports.register = async (req, res) => {
     // Send response
     return res
       .status(200)
-      .json({ message: "You Have Succefully Registered", token });
+      .json({ message: "You Have Successfully Registered", token });
   } catch (err) {
     console.error("Server Error:", err);
     return res.status(500).send("Server Error");

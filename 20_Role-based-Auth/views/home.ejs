@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <title>Home</title>
+  </head>
+  <body>
+    <h1>Welcome, <%= name %>!</h1>
+    <p>This is your Profile.</p>
+    <p>Username : <%= name %></p>
+    <p>Email : <%= email %></p>
+    <%- include("partials/messages") %> <% if (users.length > 0 && role === 'admin') { %>
+    <table class="table table-bordered mt-3">
+      <thead class="table-dark">
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Delete User</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach((user) => { %>
+        <tr>
+          <td><%= user.username %></td>
+          <td><%= user.email %></td>
+          <td><%= user.role %></td>
+          <td>
+            <button
+              class="btn btn-danger btn-sm"
+              onclick="deleteUser('<%= user._id %>')"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+    <% } %>
+
+    <script>
+      function deleteUser(id) {
+        console.log(id);
+        if (confirm("Are you sure you want to delete this user?")) {
+          fetch(`/user/delete/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              alert(data.message || "User deleted");
+              location.reload();
+            })
+            .catch((err) => console.error("Error:", err));
+        }
+      }
+    </script>
+    <!-- Bootstrap 5 JS (for dismissible alerts) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

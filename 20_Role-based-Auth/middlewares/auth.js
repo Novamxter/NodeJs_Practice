@@ -2,26 +2,25 @@ const jwt = require("jsonwebtoken");
 
 exports.verifyToken = (req, res, next) => {
   const token = req.cookies.token;
-    if (!token) {
-      req.flash("error", "Token required");
+  if (!token) {
+    req.flash("error", "Token required");
+    return res.redirect("/user/login");
+  }
+
+  jwt.verify(token, process.env.TOKEN_KEY, (err, user) => {
+    if (err) {
+      if (err.name === "TokenExpiredError") {
+        req.flash("error", "Session Expired! Login again");
+      }
+      req.flash("error", "Access denied !");
       return res.redirect("/user/login");
     }
-
-    jwt.verify(token, process.env.TOKEN_KEY, (err, user) => {
-      if (err) {
-        if (err.name === "TokenExpiredError") {
-          req.flash("error", "Session Expired! Login again");
-        }
-        req.flash("error", "Invalid Token");
-        return res.redirect("/user/login");
-      }
-      req.user = user;
-      next();
-    });
+    req.user = user;
+    next();
+  });
 };
 
-
-//Using async/await 
+//Using async/await
 // exports.verifyToken = async (req, res, next) => {
 //   const token = req.cookies.token;
 
